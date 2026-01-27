@@ -1,10 +1,14 @@
 import requests
 from typing import List, Dict, Optional
 import logging
+import random
 
 logger = logging.getLogger(__name__)
 
 POKEMON_API_BASE = "https://pokeapi.co/api/v2/pokemon"
+MAX_POKEMON_ID = 1025
+# Татал кількість покемонів в API (станом на Gen 9)
+# Так, це бед практайс, просто хотілось зтягувати рандомних, а не 20 перших :)
 
 
 class PokemonAPIClient:
@@ -17,9 +21,11 @@ class PokemonAPIClient:
         if not 1 <= count <= 20:
             raise ValueError("Count must be between 1 and 20")
 
+        pokemon_ids = random.sample(range(1, MAX_POKEMON_ID + 1), count)
+
         pokemon_list = []
 
-        for pokemon_id in range(1, count + 1):
+        for pokemon_id in pokemon_ids:
             try:
                 pokemon_data = self._fetch_single_pokemon(pokemon_id)
                 if pokemon_data:
