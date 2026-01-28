@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon AI Processor</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Pokemon AI Processor</h1>
+            <p class="subtitle">Fetch Pokemon data and generate AI-powered descriptions</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <form id="pokemonForm">
+                    <div class="form-group">
+                        <label for="count">Number of Pokemon (1-20):</label>
+                        <input
+                            type="number"
+                            id="count"
+                            name="count"
+                            min="1"
+                            max="20"
+                            value="5"
+                            required
+                        >
+                    </div>
+                    <button type="submit" id="submitBtn">
+                        <span id="btnText">Process Pokemon</span>
+                        <span id="btnLoader" class="loader hidden"></span>
+                    </button>
+                </form>
+                <div id="error" class="error hidden"></div>
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Processing Pokemon data with AI...</p>
+            </div>
+
+            <div id="results" class="results hidden">
+                <h2>Results</h2>
+                <div id="resultsContainer" class="results-container"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by <a href="https://pokeapi.co" target="_blank">PokeAPI</a> and Sentence Transformers</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

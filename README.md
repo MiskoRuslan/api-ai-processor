@@ -17,6 +17,7 @@ api-ai-processor/
 ├── main.py              # FastAPI application and server startup
 ├── api_client.py        # Pokemon API client
 ├── ai_processor.py      # AI model integration and processing
+├── schemas.py           # Pydantic schemas for data validation
 ├── requirements.txt     # Python dependencies
 ├── README.md           # This file
 ├── static/
@@ -129,22 +130,31 @@ Once the server is running, you can access the interactive API documentation at:
 
 ## How It Works
 
-1. **API Client** (`api_client.py`):
+1. **Pydantic Schemas** (`schemas.py`):
+   - `ProcessRequest`: Validates incoming requests (count: 1-20)
+   - `PokemonData`: Structures Pokemon data from API
+   - `ProcessResponse`: Formats AI-generated descriptions
+   - `HealthCheckResponse`: Health check status
+   - All data is validated and serialized using Pydantic models
+
+2. **API Client** (`api_client.py`):
    - Fetches Pokemon data from `https://pokeapi.co/api/v2/pokemon`
+   - Returns validated `PokemonData` schemas
    - Extracts relevant fields: name, types, abilities, height, weight
 
-2. **AI Processor** (`ai_processor.py`):
+3. **AI Processor** (`ai_processor.py`):
+   - Accepts `PokemonData` schemas as input
    - Uses the `all-MiniLM-L6-v2` sentence transformer model
    - Generates embeddings from Pokemon characteristics
-   - Creates natural language descriptions based on types and abilities
+   - Returns `ProcessResponse` schemas with descriptions
 
-3. **FastAPI Server** (`main.py`):
-   - Provides REST API endpoint
-   - Handles request validation
+4. **FastAPI Server** (`main.py`):
+   - Provides REST API endpoint with schema validation
+   - Uses Pydantic models for request/response validation
    - Serves static frontend files
    - Manages error handling and logging
 
-4. **Frontend** (`static/`):
+5. **Frontend** (`static/`):
    - Modern, responsive web interface
    - Real-time form validation
    - Loading states and error handling

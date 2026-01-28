@@ -2,13 +2,13 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field
 import uvicorn
 import logging
-from typing import List, Dict
+from typing import List
 
 from api_client import PokemonAPIClient
 from ai_processor import AIProcessor
+from schemas import ProcessRequest, ProcessResponse, HealthCheckResponse
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,21 +36,6 @@ pokemon_client = PokemonAPIClient()
 ai_processor = AIProcessor()
 
 
-class ProcessRequest(BaseModel):
-    count: int = Field(
-        ...,
-        ge=1,
-        le=20,
-        description="Number of pokemon to process (1-20)"
-    )
-
-
-class ProcessResponse(BaseModel):
-    """Response model for processed pokemon"""
-    item: str
-    result: str
-
-
 @app.get("/")
 async def root():
     return FileResponse("static/index.html")
@@ -58,6 +43,18 @@ async def root():
 
 @app.post("/process", response_model=List[ProcessResponse])
 async def process_pokemon(request: ProcessRequest):
+    """
+    Process pokemon data with AI
+
+    Args:
+        request: ProcessRequest schema with count parameter
+
+    Returns:
+        List of ProcessResponse schemas with AI-generated descriptions
+
+    Raises:
+        HTTPException: If validation fails or processing errors occur
+    """
     try:
         logger.info(f"Processing request for {request.count} pokemon")
 
@@ -88,13 +85,14 @@ async def process_pokemon(request: ProcessRequest):
         )
 
 
-@app.get("/health")
+@app.get("/health", response_model=HealthCheckResponse)
 async def health_check():
-    return {
-        "status": "healthy",
-        "service": "Pokemon AI Processor",
-        "version": "1.0.0"
-    }
+    """Health check endpoint"""
+    return HealthCheckResponse(
+        status="healthy",
+        service="Pokemon AI Processor",
+        version="1.0.0"
+    )
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 from sentence_transformers import SentenceTransformer
-from typing import Dict, List
+from typing import List
 import logging
+from schemas import PokemonData, ProcessResponse
 
 logger = logging.getLogger(__name__)
 
@@ -16,14 +17,14 @@ class AIProcessor:
             logger.error(f"Error loading AI model: {e}")
             self.model = None
 
-    def process_pokemon(self, pokemon_data: Dict) -> str:
+    def process_pokemon(self, pokemon_data: PokemonData) -> str:
         if not self.model:
             return "AI model not available"
 
         try:
-            name = pokemon_data.get("name", "Unknown")
-            types = pokemon_data.get("types", [])
-            abilities = pokemon_data.get("abilities", [])
+            name = pokemon_data.name
+            types = pokemon_data.types
+            abilities = pokemon_data.abilities
 
             types_str = ", ".join(types) if types else "unknown type"
             abilities_str = ", ".join(abilities[:3]) if abilities else "no abilities"
@@ -33,8 +34,8 @@ class AIProcessor:
             return description
 
         except Exception as e:
-            logger.error(f"Error processing pokemon {pokemon_data.get('name')}: {e}")
-            return f"Error processing {pokemon_data.get('name', 'pokemon')}"
+            logger.error(f"Error processing pokemon {pokemon_data.name}: {e}")
+            return f"Error processing {pokemon_data.name}"
 
     def _generate_description(self, name: str, types: str, abilities: str) -> str:
 
@@ -73,16 +74,16 @@ class AIProcessor:
             logger.error(f"Error in description generation: {e}")
             return f"{name.capitalize()} is a {types} type pokemon with {abilities}."
 
-    def process_multiple(self, pokemon_list: List[Dict]) -> List[Dict[str, any]]:
+    def process_multiple(self, pokemon_list: List[PokemonData]) -> List[ProcessResponse]:
         results = []
 
         for pokemon in pokemon_list:
-            name = pokemon.get("name", "Unknown")
             description = self.process_pokemon(pokemon)
 
-            results.append({
-                "item": name,
-                "result": description
-            })
+            result = ProcessResponse(
+                item=pokemon.name,
+                result=description
+            )
+            results.append(result)
 
         return results

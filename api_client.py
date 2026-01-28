@@ -1,7 +1,8 @@
 import requests
-from typing import List, Dict, Optional
+from typing import List, Optional
 import logging
 import random
+from schemas import PokemonData
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class PokemonAPIClient:
         self.base_url = POKEMON_API_BASE
         self.timeout = 10
 
-    def fetch_pokemon(self, count: int) -> List[Dict[str, any]]:
+    def fetch_pokemon(self, count: int) -> List[PokemonData]:
         if not 1 <= count <= 20:
             raise ValueError("Count must be between 1 and 20")
 
@@ -36,7 +37,7 @@ class PokemonAPIClient:
 
         return pokemon_list
 
-    def _fetch_single_pokemon(self, pokemon_id: int) -> Optional[Dict[str, any]]:
+    def _fetch_single_pokemon(self, pokemon_id: int) -> Optional[PokemonData]:
         try:
             url = f"{self.base_url}/{pokemon_id}"
             response = requests.get(url, timeout=self.timeout)
@@ -44,16 +45,16 @@ class PokemonAPIClient:
 
             data = response.json()
 
-            pokemon_info = {
-                "name": data.get("name", "Unknown"),
-                "types": [t["type"]["name"] for t in data.get("types", [])],
-                "abilities": [a["ability"]["name"] for a in data.get("abilities", [])],
-                "id": data.get("id"),
-                "height": data.get("height"),
-                "weight": data.get("weight")
-            }
+            pokemon_data = PokemonData(
+                name=data.get("name", "Unknown"),
+                types=[t["type"]["name"] for t in data.get("types", [])],
+                abilities=[a["ability"]["name"] for a in data.get("abilities", [])],
+                id=data.get("id", 0),
+                height=data.get("height", 0),
+                weight=data.get("weight", 0)
+            )
 
-            return pokemon_info
+            return pokemon_data
 
         except requests.RequestException as e:
             logger.error(f"Request failed for pokemon {pokemon_id}: {e}")
