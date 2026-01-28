@@ -160,36 +160,7 @@ Once the server is running, you can access the interactive API documentation at:
    - Loading states and error handling
    - Animated result cards
 
-## Error Handling
-
-The application handles various error scenarios:
-
-- **Invalid count**: Returns 400 Bad Request if count is not between 1-20
-- **API failures**: Logs errors and continues processing remaining Pokemon
-- **AI processing errors**: Falls back to basic descriptions
-- **Network issues**: Returns appropriate error messages to the client
-
 ## Development
-
-### Running in Development Mode
-
-The application runs in development mode by default with auto-reload enabled.
-
-### Logging
-
-The application logs important events to the console:
-- Startup information
-- Request processing
-- Errors and warnings
-
-### Extending the Project
-
-The modular architecture makes it easy to extend:
-
-- **Add new data sources**: Create a new client in a separate module
-- **Use different AI models**: Modify `ai_processor.py` to use other models
-- **Add more endpoints**: Add new routes in `main.py`
-- **Enhance frontend**: Modify files in the `static/` directory
 
 ## Technologies Used
 
@@ -218,29 +189,9 @@ If the AI model fails to download, ensure you have:
 - Sufficient disk space (~200MB for model and dependencies)
 - Proper firewall/proxy settings
 
-### CORS Errors
-
-The application has CORS enabled for all origins in development. For production, you should restrict allowed origins in `main.py`:
-
-```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://yourdomain.com"],
-    # ... other settings
-)
-```
-
-## License
-
-This project is provided as-is for educational and demonstration purposes.
-
 ## Credits
 
 - Pokemon data provided by [PokeAPI](https://pokeapi.co)
 - AI model: `all-MiniLM-L6-v2` from [Sentence Transformers](https://www.sbert.net)
 
 ---
-
-**Author**: Claude
-**Version**: 1.0.0
-**Date**: 2026-01-28
